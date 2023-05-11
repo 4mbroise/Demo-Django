@@ -2,6 +2,135 @@ from django.db import models
 
 # Create your models here.
 
+class Component(models.Model):
+    component_id = models.AutoField(
+        primary_key=True,
+    )
+    
+class AbstractComposite(Component):
+    pass
+
+class CompositeType(models.Model):
+    name = models.CharField(
+        primary_key=True,
+        max_length=50
+    )
+    
+class CompositeData(models.Model):
+    top_component_name = models.ForeignKey( 
+        AbstractComposite, 
+        on_delete=models.CASCADE,
+        related_name="top_component"
+    )
+    sub_component_name = models.ForeignKey( 
+        Component,
+        on_delete=models.CASCADE,
+        related_name="sub_components"
+    )
+
+    composite_type = models.ForeignKey(
+        CompositeType,
+        on_delete=models.CASCADE,
+        related_name="composite_type"
+    )
+
+    class Meta:
+        unique_together = ["top_component_name", "sub_component_name"]
+    pass
+
+class Environment(AbstractComposite):
+    name = models.CharField(
+        max_length=50,
+        unique=True
+    )
+    pass
+
+class NodeGroup(AbstractComposite):
+    name = models.CharField(
+        max_length=50,
+        unique=True
+    )
+    pass
+
+class Node(AbstractComposite):
+    name = models.CharField(
+        max_length=50,
+        unique=True
+    )
+    pass
+
+class GrpackBundle(AbstractComposite):
+    name = models.CharField(
+        max_length=50,
+        unique=True
+    )
+    pass
+
+class Module(models.Model):
+    name = models.CharField(
+        primary_key=True,
+        max_length=50,
+    )
+    pass
+
+class AbstractLeaf(Component):
+    module= models.OneToOneField(
+        to=Module,
+        on_delete=models.CASCADE,
+    )
+    pass
+
+class Os(models.Model):
+    name    = models.CharField(primary_key=True, max_length=50)
+    version = models.CharField(max_length=50)
+
+class PackageData(models.Model):
+    package_name    = models.CharField(primary_key=True, max_length=50)
+    version         = models.CharField(max_length=50)
+
+class Grpack(AbstractLeaf):
+    name = models.CharField(
+        unique=True
+    )
+    pass
+
+class Package(models.Model):
+    package_id = models.AutoField(
+        primary_key=True
+    )
+    os = models.OneToOneField(
+        Os,
+        on_delete=models.CASCADE
+    )
+
+    data = models.OneToOneField(
+        PackageData,
+        on_delete=models.CASCADE
+    )
+    related_grpack = models.ForeignKey(
+        Grpack,
+        on_delete=models.CASCADE,
+        related_name="packages"
+    )    
+    pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
 
 # Main components ------------------------------------------------------------------------------------------------------------
 class Environment(models.Model):
@@ -69,3 +198,5 @@ class PackageComposeNode(models.Model):
                                     on_delete=models.CASCADE,)
     class Meta:
         unique_together = ["node_name", "package_name"]
+
+"""
