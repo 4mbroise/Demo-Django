@@ -1,2 +1,8 @@
 
 virtualEnv/
+
+usmDjangoAPI/core/__pycache__/
+
+usmDjangoAPI/core/migrations/__pycache__/
+
+usmDjangoAPI/usmAPI/__pycache__/
